@@ -10,7 +10,11 @@ books = [
         "author": "F. Scott Fitzgerald",
         "year": 1925,
     },
-    {"id": 2, "title": "1984", "author": "George Orwell", "year": 1949},
+    {   "id": 2, 
+        "title": "1984", 
+        "author": "George Orwell", 
+        "year": 1949
+     },
 ]
 
 def find_book(book_id):
@@ -51,6 +55,25 @@ def create_book():
     books.append(new_book)
 
     return jsonify({"success": True, "data": new_book}), HTTPStatus.CREATED
+
+@app.route("/api/books/<int:book_id>", methods=["PUT"])
+def update_book(book_id):
+    book = find_book(book_id)
+
+    if book is None:
+        return jsonify({"success": False, "error": "Book not found"}), HTTPStatus.NOT_FOUND
+
+    if not request.is_json:
+        return jsonify({"success": False, "error": "Request must be JSON"}), HTTPStatus.BAD_REQUEST
+
+    data = request.get_json()
+
+    book["title"] = data.get("title", book["title"])
+    book["author"] = data.get("author", book["author"])
+    book["year"] = data.get("year", book["year"])
+
+    return jsonify({"success": True, "data": book}), HTTPStatus.OK
+
 
 if __name__ == "__main__":
     app.run(debug=True)
