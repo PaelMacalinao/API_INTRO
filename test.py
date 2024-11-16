@@ -75,5 +75,16 @@ def update_book(book_id):
     return jsonify({"success": True, "data": book}), HTTPStatus.OK
 
 
+@app.route("/api/books/<int:book_id>", methods=["DELETE"])
+def delete_book(book_id):
+    book = find_book(book_id)
+
+    if book is None:
+        return jsonify({"success": False, "error": "Book not found"}), HTTPStatus.NOT_FOUND
+
+    books.remove(book)
+
+    return jsonify({"success": True, "message": "Book deleted"}), HTTPStatus.OK
+
 if __name__ == "__main__":
     app.run(debug=True)
